@@ -8,16 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
 
         body {
             font-family: 'Cormorant Garamond', Georgia, serif;
@@ -26,7 +18,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ===================== SCREENS ===================== */
+        /* ==================== SCREENS ==================== */
 
         .screen {
             position: fixed;
@@ -37,34 +29,28 @@
             justify-content: center;
             transition: opacity 1s ease, visibility 1s ease;
         }
-
         .screen.hidden {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
         }
 
-        /* ===================== START ===================== */
+        /* ==================== START ==================== */
 
         #start {
             background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
         }
-
-        .start-content {
-            text-align: center;
-            padding: 2rem;
-        }
+        .start-content { text-align: center; padding: 2rem; }
 
         .start-line {
             font-size: clamp(0.85rem, 2.2vw, 1rem);
             font-weight: 300;
             letter-spacing: 0.2em;
-            opacity: 0;
             color: rgba(240, 230, 211, 0.45);
             margin-bottom: 1.2rem;
+            opacity: 0;
             animation: fadeUp 1.6s ease 0.2s forwards;
         }
-
         .start-title {
             font-size: clamp(1.6rem, 5.5vw, 3rem);
             font-weight: 300;
@@ -96,116 +82,105 @@
             animation: fadeUp 1.6s ease 0.9s forwards;
             -webkit-tap-highlight-color: transparent;
         }
-
         .btn:hover {
             background: rgba(240, 230, 211, 0.07);
             border-color: rgba(240, 230, 211, 0.55);
             box-shadow: 0 0 35px rgba(240, 230, 211, 0.08);
             transform: scale(1.04);
         }
+        .btn:active { transform: scale(0.97); }
 
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        /* ===================== QUIZ ===================== */
+        /* ==================== QUIZ ==================== */
 
         #quiz {
             background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
         }
-
         .quiz-inner {
             width: 100%;
-            max-width: 540px;
-            padding: 2rem;
+            max-width: 560px;
+            padding: 1.5rem;
             text-align: center;
         }
-
         .q-counter {
             font-size: 0.82rem;
             letter-spacing: 0.4em;
             opacity: 0.35;
-            margin-bottom: 2.2rem;
+            margin-bottom: 1.8rem;
         }
-
-        .q-text {
-            font-size: clamp(1.25rem, 4vw, 1.9rem);
+        .q-title {
+            font-size: clamp(1.25rem, 4vw, 1.85rem);
             font-weight: 300;
             font-style: italic;
-            line-height: 1.6;
-            margin-bottom: 2.2rem;
+            line-height: 1.55;
+            margin-bottom: 2rem;
         }
 
-        .q-answers {
+        .block { margin-bottom: 1.4rem; }
+        .block-label {
+            font-size: clamp(0.78rem, 2vw, 0.88rem);
+            letter-spacing: 0.25em;
+            opacity: 0.35;
+            margin-bottom: 0.6rem;
+            text-transform: lowercase;
+        }
+        .block-chips {
             display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            justify-content: center;
         }
 
-        .q-answer {
+        .chip {
             font-family: inherit;
-            font-size: clamp(0.92rem, 2.4vw, 1.06rem);
+            font-size: clamp(0.88rem, 2.3vw, 1rem);
             font-weight: 400;
-            padding: 0.95rem 1.3rem;
+            padding: 0.6rem 1.1rem;
             background: rgba(255, 255, 255, 0.02);
             color: #f0e6d3;
             border: 1px solid rgba(240, 230, 211, 0.1);
-            border-radius: 12px;
+            border-radius: 20px;
             cursor: pointer;
-            text-align: left;
-            line-height: 1.45;
-            transition: all 0.35s ease;
+            line-height: 1.35;
+            transition: all 0.3s ease;
             -webkit-tap-highlight-color: transparent;
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(8px);
         }
-
-        .q-answer.show {
+        .chip.show {
             opacity: 1;
             transform: translateY(0);
         }
-
-        .q-answer:hover {
+        .chip:hover {
             background: rgba(240, 230, 211, 0.05);
             border-color: rgba(240, 230, 211, 0.28);
-            padding-left: 1.6rem;
         }
-
-        .q-answer.chosen {
-            background: rgba(240, 230, 211, 0.09);
-            border-color: rgba(240, 230, 211, 0.45);
+        .chip.picked {
+            background: rgba(240, 230, 211, 0.1);
+            border-color: rgba(240, 230, 211, 0.5);
+            box-shadow: 0 0 12px rgba(240, 230, 211, 0.06);
         }
 
         .q-dots {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 2.2rem;
+            margin-top: 1.8rem;
         }
-
         .q-dot {
-            width: 6px;
-            height: 6px;
+            width: 6px; height: 6px;
             border-radius: 50%;
             background: rgba(240, 230, 211, 0.13);
             transition: all 0.4s ease;
         }
+        .q-dot.now  { background: rgba(240, 230, 211, 0.6); transform: scale(1.5); }
+        .q-dot.past { background: rgba(240, 230, 211, 0.3); }
 
-        .q-dot.now {
-            background: rgba(240, 230, 211, 0.6);
-            transform: scale(1.5);
-        }
-
-        .q-dot.past {
-            background: rgba(240, 230, 211, 0.3);
-        }
-
-        /* ===================== RESULT ===================== */
+        /* ==================== RESULT ==================== */
 
         #result {
             background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
+            z-index: 60;
         }
-
         .result-msg {
             font-size: clamp(1.1rem, 3vw, 1.45rem);
             font-weight: 300;
@@ -214,74 +189,75 @@
             margin-bottom: 2.5rem;
             opacity: 0.55;
             line-height: 1.7;
+            transition: opacity 0.5s ease;
         }
-
         #result .btn {
             animation-delay: 0.5s;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 70;
         }
 
-        /* ===================== CINEMA ===================== */
+        /* ---- crack overlay ---- */
+        #crack-svg {
+            position: fixed;
+            inset: 0;
+            z-index: 65;
+            pointer-events: none;
+        }
+        .crack-line {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ---- shatter fragments ---- */
+        .fragment {
+            position: fixed;
+            z-index: 200;
+            background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
+            animation: fragFly 1.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+        @keyframes fragFly {
+            0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+        }
+
+        /* ==================== CINEMA ==================== */
 
         #cinema {
             background: #000;
-            z-index: 100;
+            z-index: 50;
         }
-
-        /* --- particles --- */
 
         .particles {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 0;
+            position: fixed; inset: 0;
+            pointer-events: none; overflow: hidden; z-index: 0;
         }
-
         .particle {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(240, 230, 211, 0.55) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(240,230,211,0.55) 0%, transparent 70%);
             animation: pFloat linear infinite;
         }
-
         @keyframes pFloat {
-            0% {
-                transform: translateY(100vh) translateX(0) scale(0);
-                opacity: 0;
-            }
-            6% {
-                opacity: 0.7;
-                transform: translateY(94vh) translateX(0) scale(1);
-            }
-            50% {
-                transform: translateY(50vh) translateX(var(--dx)) scale(0.85);
-            }
-            94% {
-                opacity: 0.5;
-            }
-            100% {
-                transform: translateY(-5vh) translateX(var(--dx2)) scale(0.2);
-                opacity: 0;
-            }
+            0%   { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+            6%   { opacity: 0.7; transform: translateY(94vh) translateX(0) scale(1); }
+            50%  { transform: translateY(50vh) translateX(var(--dx)) scale(0.85); }
+            94%  { opacity: 0.5; }
+            100% { transform: translateY(-5vh) translateX(var(--dx2)) scale(0.2); opacity: 0; }
         }
 
-        /* --- scenes --- */
-
+        /* ---- scenes ---- */
         .scene {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             opacity: 0;
             transition: opacity 1s ease;
             z-index: 1;
         }
-
-        .scene.on {
-            opacity: 1;
-        }
+        .scene.on { opacity: 1; }
 
         .scene-text {
             font-size: clamp(1.35rem, 5vw, 2.5rem);
@@ -292,9 +268,16 @@
             padding: 0 2rem;
             z-index: 2;
             letter-spacing: 0.04em;
-            white-space: pre-line;
-            text-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            text-shadow: 0 0 50px rgba(0,0,0,0.9);
         }
+
+        .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+        .word.vis { opacity: 1; transform: translateY(0); }
 
         .scene-photo {
             margin-top: 1.5rem;
@@ -306,17 +289,39 @@
             z-index: 1;
         }
 
-        .scene.photo-on .scene-photo {
-            animation: photoIn 1s ease forwards;
+        /* reveal styles */
+        .scene.photo-fade .scene-photo {
+            animation: photoFadeIn 1s ease forwards;
         }
-
-        .scene.photo-on .scene-photo img {
-            animation: kb var(--kb-dur, 5s) ease-out forwards;
+        .scene.photo-fade .scene-photo img {
+            animation: kb 5s ease-out forwards;
         }
-
-        @keyframes photoIn {
-            from { opacity: 0; transform: scale(0.97); }
+        @keyframes photoFadeIn {
+            from { opacity: 0; transform: scale(0.96); }
             to   { opacity: 1; transform: scale(1); }
+        }
+
+        .scene.photo-circle .scene-photo {
+            opacity: 1;
+            clip-path: circle(0% at 50% 50%);
+            animation: circleOpen 1.2s ease forwards;
+        }
+        .scene.photo-circle .scene-photo img {
+            animation: kb 5s ease-out forwards;
+        }
+        @keyframes circleOpen {
+            to { clip-path: circle(75% at 50% 50%); }
+        }
+
+        .scene.photo-slide .scene-photo {
+            animation: slideUp 0.9s ease forwards;
+        }
+        .scene.photo-slide .scene-photo img {
+            animation: kb 5s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes kb {
@@ -325,51 +330,59 @@
         }
 
         .scene-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
         }
-
         .photo-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(240, 230, 211, 0.035);
-            border: 1px dashed rgba(240, 230, 211, 0.12);
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(240,230,211,0.035);
+            border: 1px dashed rgba(240,230,211,0.12);
             border-radius: 6px;
-            color: rgba(240, 230, 211, 0.22);
+            color: rgba(240,230,211,0.22);
             font-size: 0.85rem;
             letter-spacing: 0.25em;
         }
 
         .scene-final-glow {
             position: absolute;
-            width: 300px;
-            height: 300px;
+            width: 300px; height: 300px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(200, 180, 150, 0.06) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(200,180,150,0.06) 0%, transparent 70%);
             pointer-events: none;
             animation: pulse 4s ease-in-out infinite;
             z-index: 0;
         }
-
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.5; }
             50%      { transform: scale(1.2); opacity: 1; }
         }
 
-        /* ===================== MISC ===================== */
-
-        ::selection {
-            background: rgba(240, 230, 211, 0.2);
+        /* ---- glitch overlay ---- */
+        #glitch-overlay {
+            position: fixed; inset: 0;
+            pointer-events: none;
+            z-index: 500;
+            opacity: 0;
+        }
+        #glitch-overlay.on {
+            animation: glitchFx 0.28s steps(7) forwards;
+        }
+        @keyframes glitchFx {
+            0%   { opacity: 0; }
+            14%  { opacity: 0.7; background: rgba(255,60,60,0.04); transform: translateX(-4px); }
+            28%  { opacity: 0; }
+            42%  { opacity: 0.5; background: rgba(60,60,255,0.04); transform: translateX(4px) scaleY(1.003); }
+            56%  { opacity: 0; }
+            71%  { opacity: 0.6; background: rgba(240,230,211,0.03); transform: translateX(-2px); }
+            85%  { opacity: 0.2; }
+            100% { opacity: 0; transform: translateX(0); }
         }
 
-        ::-webkit-scrollbar {
-            display: none;
-        }
+        /* ==================== MISC ==================== */
+
+        ::selection { background: rgba(240,230,211,0.2); }
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
@@ -385,18 +398,26 @@
 
 <!-- ==================== QUIZ ==================== -->
 <div id="quiz" class="screen hidden">
-    <div class="quiz-inner">
+    <div class="quiz-inner" id="quiz-inner">
         <div class="q-counter" id="q-counter"></div>
-        <div class="q-text" id="q-text"></div>
-        <div class="q-answers" id="q-answers"></div>
+        <div class="q-title" id="q-title"></div>
+        <div id="q-blocks"></div>
         <div class="q-dots" id="q-dots"></div>
     </div>
 </div>
 
 <!-- ==================== RESULT ==================== -->
 <div id="result" class="screen hidden">
-    <p class="result-msg">Тест пройден.<br>Готова узнать, что получилось?</p>
-    <button class="btn" id="btn-result">узнать</button>
+    <svg id="crack-svg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="crack-glow">
+                <feGaussianBlur stdDeviation="1.5" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+        </defs>
+    </svg>
+    <p class="result-msg" id="result-msg">Готово! Нажми, чтобы узнать результат</p>
+    <button class="btn" id="btn-result">показать результат</button>
 </div>
 
 <!-- ==================== CINEMA ==================== -->
@@ -404,117 +425,199 @@
     <div class="particles" id="particles"></div>
 </div>
 
+<!-- glitch overlay (shared) -->
+<div id="glitch-overlay"></div>
+
 <script>
 (function () {
     'use strict';
 
+    /* ======================================================
+       DATA
+       ====================================================== */
+
     var questions = [
         {
-            text: 'Идеальный вечер — это...',
-            answers: [
-                'плед, дождь за окном и горячий какао',
-                'закат на крыше, когда город затихает внизу',
-                'ночная прогулка по пустым тёплым улицам',
-                'хороший фильм в обнимку с кем-то близким'
+            title: 'Собери свой идеальный вечер',
+            blocks: [
+                { label: 'за окном',  options: ['дождь', 'мягкий снег', 'тёплый ветер', 'густой туман'] },
+                { label: 'а ты',      options: ['с книгой и какао', 'на прогулке', 'смотришь фильм', 'в тишине и мыслях'] }
             ]
         },
         {
-            text: 'Ты открываешь окно утром и видишь...',
-            answers: [
-                'осенний лес, укутанный туманом',
-                'море на рассвете — тихое и золотое',
-                'заснеженную улочку, где ещё не ступала ничья нога',
-                'летний сад, залитый тёплым утренним светом'
+            title: 'Утро, которое хочется запомнить',
+            blocks: [
+                { label: 'вокруг', options: ['море', 'горы', 'старый город', 'свой дом'] },
+                { label: 'свет',   options: ['золотой рассвет', 'мягкие облака', 'сквозь шторы'] }
             ]
         },
         {
-            text: 'Какая музыка сейчас звучит в твоей голове?',
-            answers: [
-                'что-то тихое и мелодичное, без слов',
-                'что-то живое — от чего хочется двигаться',
-                'старый джаз, будто из другой эпохи',
-                'тишина — она тоже бывает музыкой'
+            title: 'Музыка, которая сейчас в голове',
+            blocks: [
+                { label: 'звучит', options: ['тихо и нежно', 'ритмично и живо', 'глубоко и старо', 'тишина'] },
+                { label: 'о чём',  options: ['ностальгия', 'свобода', 'тепло', 'красивое одиночество'] }
             ]
         },
         {
-            text: 'Если бы ты была персонажем книги, ты была бы...',
-            answers: [
-                'та, что смотрит в окно уходящего поезда',
-                'та, что танцует одна в пустой комнате ночью',
-                'та, что пишет письма, но так и не отправляет',
-                'та, которую невозможно забыть'
+            title: 'Ты — кадр из фильма. Какой?',
+            blocks: [
+                { label: 'ты',   options: ['у окна поезда', 'танцуешь одна', 'пишешь письмо', 'идёшь под дождём'] },
+                { label: 'жанр', options: ['тихая драма', 'романтика', 'артхаус', 'фэнтези'] }
             ]
         },
         {
-            text: 'Что важнее?',
-            answers: [
-                'чтобы тебя понимали без лишних слов',
-                'чтобы тебя чувствовали, даже на расстоянии',
-                'чтобы рядом было тихо и спокойно',
-                'чтобы рядом было живо и интересно'
+            title: 'Что важнее всего?',
+            blocks: [
+                { label: 'рядом',   options: ['понимание', 'чувства', 'тишина', 'интерес'] },
+                { label: 'и слова', options: ['я слышу тебя', 'я рядом', 'ты особенная', 'расскажи ещё'] }
             ]
         }
     ];
 
     var scenes = [
-        { text: 'она так редка',                                 photo: 'images/1.jpg' },
-        { text: 'и так неуловима',                               photo: 'images/2.jpg' },
-        { text: 'и я совсем без ума от неё',                     photo: 'images/3.jpg' },
-        { text: 'и как бы мне ни казалось,\nчто это иллюзия',    photo: 'images/4.jpg' },
-        { text: 'я хочу узнать её лучше',                        photo: 'images/5.jpg' },
-        { text: 'я хочу стать с ней ближе',                      photo: 'images/6.jpg' },
-        { text: 'ибо кроме неё\nмне ничего не интересно',        photo: 'images/7.jpg' }
+        { text: 'она так редка',                                  photo: 'images/1.jpg' },
+        { text: 'и так неуловима',                                photo: 'images/2.jpg' },
+        { text: 'и я совсем без ума от неё',                      photo: 'images/3.jpg' },
+        { text: 'и как бы мне ни казалось,\nчто это иллюзия',     photo: 'images/4.jpg' },
+        { text: 'я хочу узнать её лучше',                         photo: 'images/5.jpg' },
+        { text: 'я хочу стать с ней ближе',                       photo: 'images/6.jpg' },
+        { text: 'ибо кроме неё\nмне ничего не интересно',         photo: 'images/7.jpg' }
     ];
 
-    var kenBurnsOrigins = [
-        'center center', 'top left', 'top right',
-        'bottom center', 'center left', 'bottom right', 'center top'
-    ];
+    var photoStyles = ['photo-fade', 'photo-circle', 'photo-slide',
+                       'photo-fade', 'photo-circle', 'photo-slide', 'photo-fade'];
+    var kbOrigins   = ['center', 'top left', 'top right', 'bottom center',
+                       'center left', 'bottom right', 'center top'];
 
-    var qIndex = 0;
+    /* ======================================================
+       AUDIO ENGINE  (Web Audio API — no external files)
+       ====================================================== */
 
-    /* ---- helpers ---- */
+    var actx;
+    function ctx() {
+        if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+        return actx;
+    }
+
+    function playCrack(intensity) {
+        var c = ctx();
+        var dur = 0.12 + intensity * 0.04;
+        var buf = c.createBuffer(1, c.sampleRate * dur | 0, c.sampleRate);
+        var d = buf.getChannelData(0);
+        for (var i = 0; i < d.length; i++) {
+            var t = i / d.length;
+            var env = t < 0.08 ? t / 0.08 : Math.pow(1 - (t - 0.08) / 0.92, 2.5);
+            d[i] = (Math.random() * 2 - 1) * env * (0.35 + intensity * 0.12);
+            if (Math.random() < 0.015) d[i] *= 3.5;
+        }
+        var src = c.createBufferSource(); src.buffer = buf;
+        var f = c.createBiquadFilter(); f.type = 'bandpass';
+        f.frequency.value = 900 + Math.random() * 900; f.Q.value = 0.8;
+        var g = c.createGain(); g.gain.value = 0.55 + intensity * 0.25;
+        src.connect(f); f.connect(g); g.connect(c.destination);
+        src.start();
+    }
+
+    function playShatter() {
+        var c = ctx();
+        var dur = 1.4;
+        var buf = c.createBuffer(2, c.sampleRate * dur | 0, c.sampleRate);
+        for (var ch = 0; ch < 2; ch++) {
+            var d = buf.getChannelData(ch);
+            for (var i = 0; i < d.length; i++) {
+                var t = i / d.length;
+                d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 1.6) * 0.65;
+                if (Math.random() < 0.004) d[i] *= 4;
+            }
+        }
+        var src = c.createBufferSource(); src.buffer = buf;
+        var f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 2800;
+        src.connect(f); f.connect(c.destination); src.start();
+    }
+
+    function playReveal() {
+        var c = ctx();
+        var o = c.createOscillator();
+        var g = c.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(520, c.currentTime);
+        o.frequency.exponentialRampToValueAtTime(260, c.currentTime + 0.6);
+        g.gain.setValueAtTime(0.07, c.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.6);
+        o.connect(g); g.connect(c.destination);
+        o.start(); o.stop(c.currentTime + 0.6);
+    }
+
+    /* ======================================================
+       SCREEN MANAGEMENT
+       ====================================================== */
 
     function show(id) {
-        document.querySelectorAll('.screen').forEach(function (s) {
-            s.classList.add('hidden');
-        });
+        document.querySelectorAll('.screen').forEach(function (s) { s.classList.add('hidden'); });
         document.getElementById(id).classList.remove('hidden');
     }
 
-    /* ---- quiz ---- */
+    /* ======================================================
+       QUIZ  (block-based)
+       ====================================================== */
+
+    var qIdx = 0;
+    var selections; // [qIdx][blockIdx] = picked?
+
+    function initSelections() {
+        selections = questions.map(function (q) {
+            return q.blocks.map(function () { return false; });
+        });
+    }
 
     function renderQuestion() {
-        var q = questions[qIndex];
+        var q = questions[qIdx];
+        document.getElementById('q-counter').textContent = (qIdx + 1) + ' / ' + questions.length;
+        document.getElementById('q-title').textContent = q.title;
 
-        document.getElementById('q-counter').textContent =
-            (qIndex + 1) + ' / ' + questions.length;
-
-        document.getElementById('q-text').textContent = q.text;
-
-        var wrap = document.getElementById('q-answers');
+        var wrap = document.getElementById('q-blocks');
         wrap.innerHTML = '';
 
-        q.answers.forEach(function (text, i) {
-            var btn = document.createElement('button');
-            btn.className = 'q-answer';
-            btn.textContent = text;
-            btn.addEventListener('click', function () { pickAnswer(btn); });
-            wrap.appendChild(btn);
-            setTimeout(function () { btn.classList.add('show'); }, 70 * (i + 1));
+        var chipDelay = 0;
+
+        q.blocks.forEach(function (blk, bi) {
+            var div = document.createElement('div');
+            div.className = 'block';
+
+            var lbl = document.createElement('div');
+            lbl.className = 'block-label';
+            lbl.textContent = blk.label;
+            div.appendChild(lbl);
+
+            var row = document.createElement('div');
+            row.className = 'block-chips';
+
+            blk.options.forEach(function (opt, oi) {
+                var c = document.createElement('button');
+                c.className = 'chip';
+                c.textContent = opt;
+                c.addEventListener('click', function () { pickChip(c, bi); });
+                row.appendChild(c);
+                chipDelay++;
+                var d = chipDelay;
+                setTimeout(function () { c.classList.add('show'); }, d * 50);
+            });
+
+            div.appendChild(row);
+            wrap.appendChild(div);
         });
 
         var dots = document.getElementById('q-dots');
         dots.innerHTML = '';
         for (var i = 0; i < questions.length; i++) {
-            var d = document.createElement('div');
-            d.className = 'q-dot';
-            if (i < qIndex) d.classList.add('past');
-            if (i === qIndex) d.classList.add('now');
-            dots.appendChild(d);
+            var dd = document.createElement('div');
+            dd.className = 'q-dot';
+            if (i < qIdx) dd.classList.add('past');
+            if (i === qIdx) dd.classList.add('now');
+            dots.appendChild(dd);
         }
 
-        var inner = document.querySelector('.quiz-inner');
+        var inner = document.getElementById('quiz-inner');
         inner.style.opacity = '0';
         inner.style.transform = 'translateY(16px)';
         requestAnimationFrame(function () {
@@ -524,26 +627,193 @@
         });
     }
 
-    function pickAnswer(btn) {
-        btn.classList.add('chosen');
-        document.querySelectorAll('.q-answer').forEach(function (b) {
-            b.style.pointerEvents = 'none';
-        });
-        setTimeout(function () {
-            qIndex++;
-            if (qIndex < questions.length) {
-                renderQuestion();
-            } else {
-                show('result');
-            }
-        }, 500);
+    function pickChip(el, blockIdx) {
+        var row = el.parentElement;
+        row.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('picked'); });
+        el.classList.add('picked');
+        selections[qIdx][blockIdx] = true;
+
+        if (selections[qIdx].every(Boolean)) {
+            document.querySelectorAll('.chip').forEach(function (c) { c.style.pointerEvents = 'none'; });
+            setTimeout(function () {
+                qIdx++;
+                if (qIdx < questions.length) {
+                    renderQuestion();
+                } else {
+                    show('result');
+                }
+            }, 550);
+        }
     }
 
-    /* ---- cinema ---- */
+    /* ======================================================
+       CRACK MECHANIC
+       ====================================================== */
+
+    var clicks = 0;
+
+    function handleResultClick() {
+        clicks++;
+        var msg  = document.getElementById('result-msg');
+        var btn  = document.getElementById('btn-result');
+
+        if (clicks === 1) {
+            btn.textContent = 'кликни ещё раз';
+            msg.textContent = 'пожалуйста, ещё один клик';
+            return;
+        }
+
+        if (clicks === 2) {
+            msg.textContent = 'ой, что-то сломалось... продолжай кликать';
+            btn.textContent = 'кликни';
+            playCrack(1);
+            addCracks(1);
+            shakeScreen(1);
+            return;
+        }
+
+        if (clicks < 10) {
+            var intensity = clicks - 1;
+            playCrack(intensity);
+            addCracks(intensity);
+            shakeScreen(intensity);
+
+            if (clicks === 5) msg.textContent = 'ещё немного...';
+            if (clicks === 7) msg.textContent = 'почти...';
+            if (clicks === 9) { msg.textContent = '...'; msg.style.opacity = '0.25'; }
+            return;
+        }
+
+        if (clicks === 10) {
+            btn.style.pointerEvents = 'none';
+            playShatter();
+            shatterPage();
+        }
+    }
+
+    /* ---- crack generation ---- */
+
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+
+    function addCracks(n) {
+        var svg = document.getElementById('crack-svg');
+        var w = window.innerWidth, h = window.innerHeight;
+        var spread = 0.15 + n * 0.08;
+        var cx = w / 2 + (Math.random() - 0.5) * w * spread;
+        var cy = h / 2 + (Math.random() - 0.5) * h * spread;
+        var branches = 1 + Math.floor(n / 2);
+
+        for (var b = 0; b < branches; b++) {
+            var angle = Math.random() * Math.PI * 2;
+            var len = 35 + Math.random() * 70 + n * 18;
+            var pts = crackPath(cx, cy, angle, len);
+            drawCrack(svg, pts, n);
+
+            if (Math.random() < 0.5 + n * 0.06) {
+                var bi = Math.floor(pts.length * (0.25 + Math.random() * 0.45));
+                var ba = angle + (Math.random() - 0.5) * 1.6;
+                var bl = len * (0.25 + Math.random() * 0.3);
+                drawCrack(svg, crackPath(pts[bi][0], pts[bi][1], ba, bl), n);
+            }
+        }
+    }
+
+    function crackPath(x, y, angle, length) {
+        var pts = [[x, y]];
+        var segs = 5 + Math.floor(Math.random() * 6);
+        var sl = length / segs;
+        for (var i = 0; i < segs; i++) {
+            angle += (Math.random() - 0.5) * 1.1;
+            x += Math.cos(angle) * sl;
+            y += Math.sin(angle) * sl;
+            pts.push([x, y]);
+        }
+        return pts;
+    }
+
+    function drawCrack(svg, pts, intensity) {
+        var d = 'M ' + pts.map(function (p) { return p[0] + ' ' + p[1]; }).join(' L ');
+        var path = document.createElementNS(SVG_NS, 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('stroke', 'rgba(240,230,211,' + (0.25 + intensity * 0.06) + ')');
+        path.setAttribute('stroke-width', String(0.8 + intensity * 0.25));
+        path.setAttribute('filter', 'url(#crack-glow)');
+        path.classList.add('crack-line');
+
+        var total = 0;
+        for (var i = 1; i < pts.length; i++) {
+            var dx = pts[i][0] - pts[i - 1][0], dy = pts[i][1] - pts[i - 1][1];
+            total += Math.sqrt(dx * dx + dy * dy);
+        }
+        path.style.strokeDasharray = total;
+        path.style.strokeDashoffset = total;
+        path.style.transition = 'stroke-dashoffset 0.35s ease';
+        svg.appendChild(path);
+        requestAnimationFrame(function () { path.style.strokeDashoffset = '0'; });
+    }
+
+    /* ---- screen shake ---- */
+
+    function shakeScreen(intensity) {
+        var el = document.getElementById('result');
+        var amp = 2 + intensity * 1.8;
+        var dur = 120 + intensity * 25;
+        var t0 = performance.now();
+        function frame(t) {
+            var e = t - t0;
+            if (e > dur) { el.style.transform = ''; return; }
+            var decay = 1 - e / dur;
+            var x = (Math.random() - 0.5) * amp * decay * 2;
+            var y = (Math.random() - 0.5) * amp * decay * 2;
+            el.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+            requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+    }
+
+    /* ---- page shatter ---- */
+
+    function shatterPage() {
+        document.getElementById('cinema').classList.remove('hidden');
+        document.getElementById('cinema').style.opacity = '1';
+
+        var cols = 4, rows = 3;
+        var cw = window.innerWidth / cols;
+        var ch = window.innerHeight / rows;
+        var container = document.body;
+
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var f = document.createElement('div');
+                f.className = 'fragment';
+                f.style.left   = (c * cw) + 'px';
+                f.style.top    = (r * ch) + 'px';
+                f.style.width  = (cw + 1) + 'px';
+                f.style.height = (ch + 1) + 'px';
+                var dx = (c - cols / 2 + 0.5) * 220 + (Math.random() - 0.5) * 120;
+                var dy = (r - rows / 2 + 0.5) * 220 + (Math.random() - 0.5) * 120;
+                var rot = (Math.random() - 0.5) * 55;
+                f.style.setProperty('--dx', dx + 'px');
+                f.style.setProperty('--dy', dy + 'px');
+                f.style.setProperty('--rot', rot + 'deg');
+                container.appendChild(f);
+            }
+        }
+
+        setTimeout(function () {
+            document.getElementById('result').classList.add('hidden');
+            document.querySelectorAll('.fragment').forEach(function (f) { f.remove(); });
+            startCinema();
+        }, 1400);
+    }
+
+    /* ======================================================
+       CINEMA
+       ====================================================== */
 
     function spawnParticles() {
         var box = document.getElementById('particles');
-        var n = window.innerWidth < 600 ? 25 : 45;
+        var n = window.innerWidth < 600 ? 22 : 42;
         for (var i = 0; i < n; i++) {
             var p = document.createElement('div');
             p.className = 'particle';
@@ -563,7 +833,6 @@
 
     function buildScenes() {
         var cinema = document.getElementById('cinema');
-
         scenes.forEach(function (s, i) {
             var div = document.createElement('div');
             div.className = 'scene';
@@ -571,25 +840,23 @@
 
             var txt = document.createElement('div');
             txt.className = 'scene-text';
-            txt.textContent = s.text;
 
-            var photoWrap = document.createElement('div');
-            photoWrap.className = 'scene-photo';
-
+            var pw = document.createElement('div');
+            pw.className = 'scene-photo';
             var img = document.createElement('img');
             img.src = s.photo;
             img.alt = '';
-            img.style.transformOrigin = kenBurnsOrigins[i];
+            img.style.transformOrigin = kbOrigins[i];
             img.onerror = function () {
                 var ph = document.createElement('div');
                 ph.className = 'photo-placeholder';
                 ph.textContent = 'фото ' + (i + 1);
                 this.replaceWith(ph);
             };
+            pw.appendChild(img);
 
-            photoWrap.appendChild(img);
             div.appendChild(txt);
-            div.appendChild(photoWrap);
+            div.appendChild(pw);
 
             if (i === scenes.length - 1) {
                 var glow = document.createElement('div');
@@ -601,44 +868,91 @@
         });
     }
 
-    function playCinema() {
-        var i = 0;
+    function startCinema() {
+        spawnParticles();
+        buildScenes();
+        setTimeout(function () { playScene(0); }, 600);
+    }
 
-        function next() {
-            if (i >= scenes.length) return;
+    function playScene(i) {
+        if (i >= scenes.length) return;
 
-            var el = document.getElementById('sc-' + i);
-            var isLast = (i === scenes.length - 1);
+        var el = document.getElementById('sc-' + i);
+        var txt = el.querySelector('.scene-text');
+        var isLast = i === scenes.length - 1;
 
-            setTimeout(function () { el.classList.add('on'); }, 250);
+        el.classList.add('on');
+        playReveal();
 
-            setTimeout(function () { el.classList.add('photo-on'); }, 1600);
+        showWords(txt, scenes[i].text, function () {
+            setTimeout(function () {
+                el.classList.add(photoStyles[i]);
+            }, 400);
 
             if (!isLast) {
                 setTimeout(function () {
-                    el.classList.remove('on', 'photo-on');
-                    i++;
-                    setTimeout(next, 900);
-                }, 5200);
+                    glitch(function () {
+                        el.classList.remove('on', photoStyles[i]);
+                        txt.innerHTML = '';
+                        setTimeout(function () { playScene(i + 1); }, 500);
+                    });
+                }, 3800);
             }
-        }
-
-        next();
+        });
     }
 
-    /* ---- init ---- */
+    /* ---- word-by-word text ---- */
+
+    function showWords(el, text, done) {
+        el.innerHTML = '';
+        var allSpans = [];
+        var parts = text.split('\n');
+
+        parts.forEach(function (line, li) {
+            if (li > 0) el.appendChild(document.createElement('br'));
+            var words = line.split(' ');
+            words.forEach(function (w, wi) {
+                if (wi > 0) el.appendChild(document.createTextNode(' '));
+                var span = document.createElement('span');
+                span.className = 'word';
+                span.textContent = w;
+                allSpans.push(span);
+                el.appendChild(span);
+            });
+        });
+
+        allSpans.forEach(function (span, idx) {
+            setTimeout(function () { span.classList.add('vis'); }, idx * 190);
+        });
+
+        var total = allSpans.length * 190 + 500;
+        if (done) setTimeout(done, total);
+    }
+
+    /* ---- glitch transition ---- */
+
+    function glitch(cb) {
+        var el = document.getElementById('glitch-overlay');
+        el.classList.add('on');
+        playCrack(2);
+        setTimeout(function () {
+            el.classList.remove('on');
+            if (cb) cb();
+        }, 300);
+    }
+
+    /* ======================================================
+       INIT
+       ====================================================== */
+
+    initSelections();
 
     document.getElementById('btn-start').addEventListener('click', function () {
         show('quiz');
         renderQuestion();
     });
 
-    document.getElementById('btn-result').addEventListener('click', function () {
-        show('cinema');
-        spawnParticles();
-        buildScenes();
-        playCinema();
-    });
+    document.getElementById('btn-result').addEventListener('click', handleResultClick);
 
 })();
 </script>
