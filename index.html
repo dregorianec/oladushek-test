@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Маленький тест</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: #0a0a0a;
+            color: #f0e6d3;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===================== SCREENS ===================== */
+
+        .screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* ===================== START ===================== */
+
+        #start {
+            background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
+        }
+
+        .start-content {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .start-line {
+            font-size: clamp(0.85rem, 2.2vw, 1rem);
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            opacity: 0;
+            color: rgba(240, 230, 211, 0.45);
+            margin-bottom: 1.2rem;
+            animation: fadeUp 1.6s ease 0.2s forwards;
+        }
+
+        .start-title {
+            font-size: clamp(1.6rem, 5.5vw, 3rem);
+            font-weight: 300;
+            line-height: 1.45;
+            margin-bottom: 3.5rem;
+            letter-spacing: 0.03em;
+            opacity: 0;
+            animation: fadeUp 1.6s ease 0.5s forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            font-family: inherit;
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            font-weight: 400;
+            padding: 0.95rem 3.2rem;
+            background: transparent;
+            color: #f0e6d3;
+            border: 1px solid rgba(240, 230, 211, 0.3);
+            border-radius: 50px;
+            cursor: pointer;
+            letter-spacing: 0.18em;
+            transition: all 0.45s ease;
+            opacity: 0;
+            animation: fadeUp 1.6s ease 0.9s forwards;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover {
+            background: rgba(240, 230, 211, 0.07);
+            border-color: rgba(240, 230, 211, 0.55);
+            box-shadow: 0 0 35px rgba(240, 230, 211, 0.08);
+            transform: scale(1.04);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        /* ===================== QUIZ ===================== */
+
+        #quiz {
+            background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
+        }
+
+        .quiz-inner {
+            width: 100%;
+            max-width: 540px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .q-counter {
+            font-size: 0.82rem;
+            letter-spacing: 0.4em;
+            opacity: 0.35;
+            margin-bottom: 2.2rem;
+        }
+
+        .q-text {
+            font-size: clamp(1.25rem, 4vw, 1.9rem);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 2.2rem;
+        }
+
+        .q-answers {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .q-answer {
+            font-family: inherit;
+            font-size: clamp(0.92rem, 2.4vw, 1.06rem);
+            font-weight: 400;
+            padding: 0.95rem 1.3rem;
+            background: rgba(255, 255, 255, 0.02);
+            color: #f0e6d3;
+            border: 1px solid rgba(240, 230, 211, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: left;
+            line-height: 1.45;
+            transition: all 0.35s ease;
+            -webkit-tap-highlight-color: transparent;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .q-answer.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .q-answer:hover {
+            background: rgba(240, 230, 211, 0.05);
+            border-color: rgba(240, 230, 211, 0.28);
+            padding-left: 1.6rem;
+        }
+
+        .q-answer.chosen {
+            background: rgba(240, 230, 211, 0.09);
+            border-color: rgba(240, 230, 211, 0.45);
+        }
+
+        .q-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2.2rem;
+        }
+
+        .q-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(240, 230, 211, 0.13);
+            transition: all 0.4s ease;
+        }
+
+        .q-dot.now {
+            background: rgba(240, 230, 211, 0.6);
+            transform: scale(1.5);
+        }
+
+        .q-dot.past {
+            background: rgba(240, 230, 211, 0.3);
+        }
+
+        /* ===================== RESULT ===================== */
+
+        #result {
+            background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
+        }
+
+        .result-msg {
+            font-size: clamp(1.1rem, 3vw, 1.45rem);
+            font-weight: 300;
+            text-align: center;
+            padding: 0 2rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.55;
+            line-height: 1.7;
+        }
+
+        #result .btn {
+            animation-delay: 0.5s;
+        }
+
+        /* ===================== CINEMA ===================== */
+
+        #cinema {
+            background: #000;
+            z-index: 100;
+        }
+
+        /* --- particles --- */
+
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(240, 230, 211, 0.55) 0%, transparent 70%);
+            animation: pFloat linear infinite;
+        }
+
+        @keyframes pFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            6% {
+                opacity: 0.7;
+                transform: translateY(94vh) translateX(0) scale(1);
+            }
+            50% {
+                transform: translateY(50vh) translateX(var(--dx)) scale(0.85);
+            }
+            94% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-5vh) translateX(var(--dx2)) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        /* --- scenes --- */
+
+        .scene {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 1;
+        }
+
+        .scene.on {
+            opacity: 1;
+        }
+
+        .scene-text {
+            font-size: clamp(1.35rem, 5vw, 2.5rem);
+            font-weight: 300;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.55;
+            padding: 0 2rem;
+            z-index: 2;
+            letter-spacing: 0.04em;
+            white-space: pre-line;
+            text-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+        }
+
+        .scene-photo {
+            margin-top: 1.5rem;
+            width: min(72vw, 340px);
+            height: min(72vw, 340px);
+            border-radius: 6px;
+            overflow: hidden;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .scene.photo-on .scene-photo {
+            animation: photoIn 1s ease forwards;
+        }
+
+        .scene.photo-on .scene-photo img {
+            animation: kb var(--kb-dur, 5s) ease-out forwards;
+        }
+
+        @keyframes photoIn {
+            from { opacity: 0; transform: scale(0.97); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes kb {
+            from { transform: scale(1.06); }
+            to   { transform: scale(1.16); }
+        }
+
+        .scene-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(240, 230, 211, 0.035);
+            border: 1px dashed rgba(240, 230, 211, 0.12);
+            border-radius: 6px;
+            color: rgba(240, 230, 211, 0.22);
+            font-size: 0.85rem;
+            letter-spacing: 0.25em;
+        }
+
+        .scene-final-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200, 180, 150, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            animation: pulse 4s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50%      { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* ===================== MISC ===================== */
+
+        ::selection {
+            background: rgba(240, 230, 211, 0.2);
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== START ==================== -->
+<div id="start" class="screen">
+    <div class="start-content">
+        <div class="start-line">для одного особенного человека</div>
+        <h1 class="start-title">Маленький тест</h1>
+        <button class="btn" id="btn-start">начать</button>
+    </div>
+</div>
+
+<!-- ==================== QUIZ ==================== -->
+<div id="quiz" class="screen hidden">
+    <div class="quiz-inner">
+        <div class="q-counter" id="q-counter"></div>
+        <div class="q-text" id="q-text"></div>
+        <div class="q-answers" id="q-answers"></div>
+        <div class="q-dots" id="q-dots"></div>
+    </div>
+</div>
+
+<!-- ==================== RESULT ==================== -->
+<div id="result" class="screen hidden">
+    <p class="result-msg">Тест пройден.<br>Готова узнать, что получилось?</p>
+    <button class="btn" id="btn-result">узнать</button>
+</div>
+
+<!-- ==================== CINEMA ==================== -->
+<div id="cinema" class="screen hidden">
+    <div class="particles" id="particles"></div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var questions = [
+        {
+            text: 'Идеальный вечер — это...',
+            answers: [
+                'плед, дождь за окном и горячий какао',
+                'закат на крыше, когда город затихает внизу',
+                'ночная прогулка по пустым тёплым улицам',
+                'хороший фильм в обнимку с кем-то близким'
+            ]
+        },
+        {
+            text: 'Ты открываешь окно утром и видишь...',
+            answers: [
+                'осенний лес, укутанный туманом',
+                'море на рассвете — тихое и золотое',
+                'заснеженную улочку, где ещё не ступала ничья нога',
+                'летний сад, залитый тёплым утренним светом'
+            ]
+        },
+        {
+            text: 'Какая музыка сейчас звучит в твоей голове?',
+            answers: [
+                'что-то тихое и мелодичное, без слов',
+                'что-то живое — от чего хочется двигаться',
+                'старый джаз, будто из другой эпохи',
+                'тишина — она тоже бывает музыкой'
+            ]
+        },
+        {
+            text: 'Если бы ты была персонажем книги, ты была бы...',
+            answers: [
+                'та, что смотрит в окно уходящего поезда',
+                'та, что танцует одна в пустой комнате ночью',
+                'та, что пишет письма, но так и не отправляет',
+                'та, которую невозможно забыть'
+            ]
+        },
+        {
+            text: 'Что важнее?',
+            answers: [
+                'чтобы тебя понимали без лишних слов',
+                'чтобы тебя чувствовали, даже на расстоянии',
+                'чтобы рядом было тихо и спокойно',
+                'чтобы рядом было живо и интересно'
+            ]
+        }
+    ];
+
+    var scenes = [
+        { text: 'она так редка',                                 photo: 'images/1.jpg' },
+        { text: 'и так неуловима',                               photo: 'images/2.jpg' },
+        { text: 'и я совсем без ума от неё',                     photo: 'images/3.jpg' },
+        { text: 'и как бы мне ни казалось,\nчто это иллюзия',    photo: 'images/4.jpg' },
+        { text: 'я хочу узнать её лучше',                        photo: 'images/5.jpg' },
+        { text: 'я хочу стать с ней ближе',                      photo: 'images/6.jpg' },
+        { text: 'ибо кроме неё\nмне ничего не интересно',        photo: 'images/7.jpg' }
+    ];
+
+    var kenBurnsOrigins = [
+        'center center', 'top left', 'top right',
+        'bottom center', 'center left', 'bottom right', 'center top'
+    ];
+
+    var qIndex = 0;
+
+    /* ---- helpers ---- */
+
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(function (s) {
+            s.classList.add('hidden');
+        });
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    /* ---- quiz ---- */
+
+    function renderQuestion() {
+        var q = questions[qIndex];
+
+        document.getElementById('q-counter').textContent =
+            (qIndex + 1) + ' / ' + questions.length;
+
+        document.getElementById('q-text').textContent = q.text;
+
+        var wrap = document.getElementById('q-answers');
+        wrap.innerHTML = '';
+
+        q.answers.forEach(function (text, i) {
+            var btn = document.createElement('button');
+            btn.className = 'q-answer';
+            btn.textContent = text;
+            btn.addEventListener('click', function () { pickAnswer(btn); });
+            wrap.appendChild(btn);
+            setTimeout(function () { btn.classList.add('show'); }, 70 * (i + 1));
+        });
+
+        var dots = document.getElementById('q-dots');
+        dots.innerHTML = '';
+        for (var i = 0; i < questions.length; i++) {
+            var d = document.createElement('div');
+            d.className = 'q-dot';
+            if (i < qIndex) d.classList.add('past');
+            if (i === qIndex) d.classList.add('now');
+            dots.appendChild(d);
+        }
+
+        var inner = document.querySelector('.quiz-inner');
+        inner.style.opacity = '0';
+        inner.style.transform = 'translateY(16px)';
+        requestAnimationFrame(function () {
+            inner.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            inner.style.opacity = '1';
+            inner.style.transform = 'translateY(0)';
+        });
+    }
+
+    function pickAnswer(btn) {
+        btn.classList.add('chosen');
+        document.querySelectorAll('.q-answer').forEach(function (b) {
+            b.style.pointerEvents = 'none';
+        });
+        setTimeout(function () {
+            qIndex++;
+            if (qIndex < questions.length) {
+                renderQuestion();
+            } else {
+                show('result');
+            }
+        }, 500);
+    }
+
+    /* ---- cinema ---- */
+
+    function spawnParticles() {
+        var box = document.getElementById('particles');
+        var n = window.innerWidth < 600 ? 25 : 45;
+        for (var i = 0; i < n; i++) {
+            var p = document.createElement('div');
+            p.className = 'particle';
+            var sz = 2 + Math.random() * 3;
+            var dur = 9 + Math.random() * 14;
+            var dx = (Math.random() - 0.5) * 70;
+            var dx2 = dx + (Math.random() - 0.5) * 50;
+            p.style.cssText =
+                'left:' + (Math.random() * 100) + '%;' +
+                'width:' + sz + 'px;height:' + sz + 'px;' +
+                'animation-duration:' + dur + 's;' +
+                'animation-delay:-' + (Math.random() * dur) + 's;' +
+                '--dx:' + dx + 'px;--dx2:' + dx2 + 'px;';
+            box.appendChild(p);
+        }
+    }
+
+    function buildScenes() {
+        var cinema = document.getElementById('cinema');
+
+        scenes.forEach(function (s, i) {
+            var div = document.createElement('div');
+            div.className = 'scene';
+            div.id = 'sc-' + i;
+
+            var txt = document.createElement('div');
+            txt.className = 'scene-text';
+            txt.textContent = s.text;
+
+            var photoWrap = document.createElement('div');
+            photoWrap.className = 'scene-photo';
+
+            var img = document.createElement('img');
+            img.src = s.photo;
+            img.alt = '';
+            img.style.transformOrigin = kenBurnsOrigins[i];
+            img.onerror = function () {
+                var ph = document.createElement('div');
+                ph.className = 'photo-placeholder';
+                ph.textContent = 'фото ' + (i + 1);
+                this.replaceWith(ph);
+            };
+
+            photoWrap.appendChild(img);
+            div.appendChild(txt);
+            div.appendChild(photoWrap);
+
+            if (i === scenes.length - 1) {
+                var glow = document.createElement('div');
+                glow.className = 'scene-final-glow';
+                div.appendChild(glow);
+            }
+
+            cinema.appendChild(div);
+        });
+    }
+
+    function playCinema() {
+        var i = 0;
+
+        function next() {
+            if (i >= scenes.length) return;
+
+            var el = document.getElementById('sc-' + i);
+            var isLast = (i === scenes.length - 1);
+
+            setTimeout(function () { el.classList.add('on'); }, 250);
+
+            setTimeout(function () { el.classList.add('photo-on'); }, 1600);
+
+            if (!isLast) {
+                setTimeout(function () {
+                    el.classList.remove('on', 'photo-on');
+                    i++;
+                    setTimeout(next, 900);
+                }, 5200);
+            }
+        }
+
+        next();
+    }
+
+    /* ---- init ---- */
+
+    document.getElementById('btn-start').addEventListener('click', function () {
+        show('quiz');
+        renderQuestion();
+    });
+
+    document.getElementById('btn-result').addEventListener('click', function () {
+        show('cinema');
+        spawnParticles();
+        buildScenes();
+        playCinema();
+    });
+
+})();
+</script>
+
+</body>
+</html>
