@@ -173,7 +173,30 @@
             transition: all 0.4s ease;
         }
         .q-dot.now  { background: rgba(240, 230, 211, 0.6); transform: scale(1.5); }
-        .q-dot.past { background: rgba(240, 230, 211, 0.3); }
+        .q-dot.past { background: rgba(240, 230, 211, 0.3); cursor: pointer; }
+        .q-dot.past:hover { background: rgba(240, 230, 211, 0.55); transform: scale(1.3); }
+
+        .q-back {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            font-family: inherit;
+            font-size: 1.4rem;
+            color: rgba(240, 230, 211, 0.3);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: opacity 0.4s ease, color 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .q-back.vis {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .q-back:hover { color: rgba(240, 230, 211, 0.65); }
 
         /* ==================== RESULT ==================== */
 
@@ -189,11 +212,12 @@
             margin-bottom: 2.5rem;
             opacity: 0.55;
             line-height: 1.7;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateY(0);
         }
         #result .btn {
             animation-delay: 0.5s;
-            transition: all 0.4s ease;
+            transition: opacity 0.35s ease, transform 0.35s ease, background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
             position: relative;
             z-index: 70;
         }
@@ -202,8 +226,11 @@
         #crack-svg {
             position: fixed;
             inset: 0;
-            z-index: 65;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
             pointer-events: none;
+            overflow: visible;
         }
         .crack-line {
             fill: none;
@@ -398,6 +425,7 @@
 
 <!-- ==================== QUIZ ==================== -->
 <div id="quiz" class="screen hidden">
+    <button class="q-back" id="q-back">&#8592;</button>
     <div class="quiz-inner" id="quiz-inner">
         <div class="q-counter" id="q-counter"></div>
         <div class="q-title" id="q-title"></div>
@@ -408,17 +436,18 @@
 
 <!-- ==================== RESULT ==================== -->
 <div id="result" class="screen hidden">
-    <svg id="crack-svg" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <filter id="crack-glow">
-                <feGaussianBlur stdDeviation="1.5" result="b"/>
-                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-        </defs>
-    </svg>
     <p class="result-msg" id="result-msg">Готово! Нажми, чтобы узнать результат</p>
     <button class="btn" id="btn-result">показать результат</button>
 </div>
+
+<svg id="crack-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="display:none">
+    <defs>
+        <filter id="crack-glow">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+    </defs>
+</svg>
 
 <!-- ==================== CINEMA ==================== -->
 <div id="cinema" class="screen hidden">
@@ -501,19 +530,19 @@
 
     function playCrack(intensity) {
         var c = ctx();
-        var dur = 0.12 + intensity * 0.04;
+        var dur = 0.12 + intensity * 0.03;
         var buf = c.createBuffer(1, c.sampleRate * dur | 0, c.sampleRate);
         var d = buf.getChannelData(0);
         for (var i = 0; i < d.length; i++) {
             var t = i / d.length;
             var env = t < 0.08 ? t / 0.08 : Math.pow(1 - (t - 0.08) / 0.92, 2.5);
-            d[i] = (Math.random() * 2 - 1) * env * (0.35 + intensity * 0.12);
-            if (Math.random() < 0.015) d[i] *= 3.5;
+            d[i] = (Math.random() * 2 - 1) * env * (0.2 + intensity * 0.025);
+            if (Math.random() < 0.015) d[i] *= 2;
         }
         var src = c.createBufferSource(); src.buffer = buf;
         var f = c.createBiquadFilter(); f.type = 'bandpass';
         f.frequency.value = 900 + Math.random() * 900; f.Q.value = 0.8;
-        var g = c.createGain(); g.gain.value = 0.55 + intensity * 0.25;
+        var g = c.createGain(); g.gain.value = 0.3 + intensity * 0.04;
         src.connect(f); f.connect(g); g.connect(c.destination);
         src.start();
     }
@@ -566,18 +595,28 @@
 
     function initSelections() {
         selections = questions.map(function (q) {
-            return q.blocks.map(function () { return false; });
+            return q.blocks.map(function () { return null; });
         });
+    }
+
+    function goTo(idx) {
+        qIdx = idx;
+        renderQuestion();
     }
 
     function renderQuestion() {
         var q = questions[qIdx];
+        var revisit = selections[qIdx].some(function (s) { return s !== null; });
+
         document.getElementById('q-counter').textContent = (qIdx + 1) + ' / ' + questions.length;
         document.getElementById('q-title').textContent = q.title;
 
+        var back = document.getElementById('q-back');
+        if (qIdx > 0) back.classList.add('vis');
+        else back.classList.remove('vis');
+
         var wrap = document.getElementById('q-blocks');
         wrap.innerHTML = '';
-
         var chipDelay = 0;
 
         q.blocks.forEach(function (blk, bi) {
@@ -592,15 +631,21 @@
             var row = document.createElement('div');
             row.className = 'block-chips';
 
-            blk.options.forEach(function (opt, oi) {
+            blk.options.forEach(function (opt) {
                 var c = document.createElement('button');
                 c.className = 'chip';
                 c.textContent = opt;
                 c.addEventListener('click', function () { pickChip(c, bi); });
                 row.appendChild(c);
-                chipDelay++;
-                var d = chipDelay;
-                setTimeout(function () { c.classList.add('show'); }, d * 50);
+
+                if (revisit) {
+                    c.classList.add('show');
+                    if (selections[qIdx][bi] === opt) c.classList.add('picked');
+                } else {
+                    chipDelay++;
+                    var d = chipDelay;
+                    setTimeout(function () { c.classList.add('show'); }, d * 50);
+                }
             });
 
             div.appendChild(row);
@@ -612,7 +657,12 @@
         for (var i = 0; i < questions.length; i++) {
             var dd = document.createElement('div');
             dd.className = 'q-dot';
-            if (i < qIdx) dd.classList.add('past');
+            if (i < qIdx) {
+                dd.classList.add('past');
+                dd.addEventListener('click', (function (idx) {
+                    return function () { goTo(idx); };
+                })(i));
+            }
             if (i === qIdx) dd.classList.add('now');
             dots.appendChild(dd);
         }
@@ -631,9 +681,10 @@
         var row = el.parentElement;
         row.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('picked'); });
         el.classList.add('picked');
-        selections[qIdx][blockIdx] = true;
+        selections[qIdx][blockIdx] = el.textContent;
 
-        if (selections[qIdx].every(Boolean)) {
+        var allDone = selections[qIdx].every(function (s) { return s !== null; });
+        if (allDone) {
             document.querySelectorAll('.chip').forEach(function (c) { c.style.pointerEvents = 'none'; });
             setTimeout(function () {
                 qIdx++;
@@ -641,6 +692,7 @@
                     renderQuestion();
                 } else {
                     show('result');
+                    document.getElementById('crack-svg').style.display = '';
                 }
             }, 550);
         }
@@ -652,20 +704,40 @@
 
     var clicks = 0;
 
+    function fadeMsg(text, opac) {
+        var m = document.getElementById('result-msg');
+        m.style.opacity = '0';
+        m.style.transform = 'translateY(-5px)';
+        setTimeout(function () {
+            m.textContent = text;
+            m.style.opacity = String(opac != null ? opac : 0.55);
+            m.style.transform = 'translateY(0)';
+        }, 350);
+    }
+
+    function fadeBtn(text) {
+        var b = document.getElementById('btn-result');
+        b.style.opacity = '0';
+        b.style.transform = 'scale(0.96)';
+        setTimeout(function () {
+            b.textContent = text;
+            b.style.opacity = '1';
+            b.style.transform = 'scale(1)';
+        }, 300);
+    }
+
     function handleResultClick() {
         clicks++;
-        var msg  = document.getElementById('result-msg');
-        var btn  = document.getElementById('btn-result');
 
         if (clicks === 1) {
-            btn.textContent = 'кликни ещё раз';
-            msg.textContent = 'пожалуйста, ещё один клик';
+            fadeBtn('кликни ещё раз');
+            fadeMsg('пожалуйста, ещё один клик');
             return;
         }
 
         if (clicks === 2) {
-            msg.textContent = 'ой, что-то сломалось... продолжай кликать';
-            btn.textContent = 'кликни';
+            fadeMsg('ой, что-то сломалось... продолжай кликать');
+            fadeBtn('кликни');
             playCrack(1);
             addCracks(1);
             shakeScreen(1);
@@ -678,14 +750,14 @@
             addCracks(intensity);
             shakeScreen(intensity);
 
-            if (clicks === 5) msg.textContent = 'ещё немного...';
-            if (clicks === 7) msg.textContent = 'почти...';
-            if (clicks === 9) { msg.textContent = '...'; msg.style.opacity = '0.25'; }
+            if (clicks === 5) fadeMsg('ещё немного...');
+            if (clicks === 7) fadeMsg('почти...');
+            if (clicks === 9) fadeMsg('...', 0.2);
             return;
         }
 
         if (clicks === 10) {
-            btn.style.pointerEvents = 'none';
+            document.getElementById('btn-result').style.pointerEvents = 'none';
             playShatter();
             shatterPage();
         }
@@ -802,6 +874,7 @@
 
         setTimeout(function () {
             document.getElementById('result').classList.add('hidden');
+            document.getElementById('crack-svg').style.display = 'none';
             document.querySelectorAll('.fragment').forEach(function (f) { f.remove(); });
             startCinema();
         }, 1400);
@@ -950,6 +1023,10 @@
     document.getElementById('btn-start').addEventListener('click', function () {
         show('quiz');
         renderQuestion();
+    });
+
+    document.getElementById('q-back').addEventListener('click', function () {
+        if (qIdx > 0) goTo(qIdx - 1);
     });
 
     document.getElementById('btn-result').addEventListener('click', handleResultClick);
