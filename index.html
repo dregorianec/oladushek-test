@@ -852,7 +852,7 @@
         var cy = h * (z[2] + Math.random() * (z[3] - z[2]));
         crackCenters.push([cx, cy]);
 
-        var arms = 4 + Math.floor(Math.random() * 3);
+        var arms = isMobile ? 3 : (4 + Math.floor(Math.random() * 3));
         var baseAngle = Math.random() * Math.PI * 2;
 
         for (var a = 0; a < arms; a++) {
@@ -865,7 +865,7 @@
             drawCrack(svg, pts, 2);
             storeCrack(pts);
 
-            var bc = 1 + Math.floor(Math.random() * 3);
+            var bc = isMobile ? 1 : (1 + Math.floor(Math.random() * 3));
             for (var b = 0; b < bc; b++) {
                 var t = 0.1 + Math.random() * 0.55;
                 var bi = Math.min(Math.floor(pts.length * t), pts.length - 1);
@@ -876,7 +876,7 @@
                 drawCrack(svg, brPts, 2);
                 storeCrack(brPts);
 
-                if (Math.random() < 0.35) {
+                if (!isMobile && Math.random() < 0.35) {
                     var si = Math.min(Math.floor(brPts.length * (0.3 + Math.random() * 0.4)), brPts.length - 1);
                     var sa = ba + (Math.random() - 0.5) * 1.4;
                     var sl2 = bl * (0.25 + Math.random() * 0.3);
@@ -887,16 +887,18 @@
             }
         }
 
-        var mc = 3 + Math.floor(Math.random() * 4);
-        for (var m = 0; m < mc; m++) {
-            var ma = Math.random() * Math.PI * 2;
-            var mr = 3 + Math.random() * 14;
-            var mPts = glassCrackPath(
-                cx + Math.cos(ma) * mr,
-                cy + Math.sin(ma) * mr,
-                ma, 10 + Math.random() * 25
-            );
-            drawCrack(svg, mPts, 1);
+        if (!isMobile) {
+            var mc = 3 + Math.floor(Math.random() * 4);
+            for (var m = 0; m < mc; m++) {
+                var ma = Math.random() * Math.PI * 2;
+                var mr = 3 + Math.random() * 14;
+                var mPts = glassCrackPath(
+                    cx + Math.cos(ma) * mr,
+                    cy + Math.sin(ma) * mr,
+                    ma, 10 + Math.random() * 25
+                );
+                drawCrack(svg, mPts, 1);
+            }
         }
     }
 
@@ -941,7 +943,8 @@
 
     function growAllCracks(intensity) {
         var svg = document.getElementById('crack-svg');
-        var count = Math.min(crackStore.length, 4 + Math.floor(intensity * 1.2));
+        var maxGrow = isMobile ? 2 + Math.floor(intensity * 0.5) : 4 + Math.floor(intensity * 1.2);
+        var count = Math.min(crackStore.length, maxGrow);
         var indices = [];
         for (var i = 0; i < crackStore.length; i++) indices.push(i);
         indices.sort(function () { return Math.random() - 0.5; });
@@ -961,8 +964,8 @@
         crack.endY = last[1];
         crack.endAngle = Math.atan2(last[1] - prev[1], last[0] - prev[0]);
 
-        var branchChance = 0.25 + intensity * 0.06;
-        var branches = Math.random() < branchChance ? (intensity > 5 ? 2 : 1) : 0;
+        var branchChance = isMobile ? 0.15 : (0.25 + intensity * 0.06);
+        var branches = Math.random() < branchChance ? ((!isMobile && intensity > 5) ? 2 : 1) : 0;
         for (var br = 0; br < branches; br++) {
             var bi = Math.min(Math.floor(pts.length * (0.2 + Math.random() * 0.5)), pts.length - 1);
             var ba = angle + (Math.random() < 0.5 ? 1 : -1) * (0.35 + Math.random() * 0.85);
@@ -1079,7 +1082,8 @@
         resultEl.style.visibility = 'hidden';
         resultEl.style.pointerEvents = 'none';
 
-        startCinema();
+        spawnParticles();
+        buildScenes();
 
         var cols = isMobile ? 8 : 14;
         var rows = isMobile ? 12 : 20;
@@ -1180,6 +1184,8 @@
         setTimeout(function () {
             document.querySelectorAll('.fragment').forEach(function (f) { f.remove(); });
         }, 2500);
+
+        setTimeout(function () { playScene(0); }, 4000);
     }
 
     /* ======================================================
@@ -1247,12 +1253,6 @@
 
             cinema.appendChild(div);
         });
-    }
-
-    function startCinema() {
-        spawnParticles();
-        buildScenes();
-        setTimeout(function () { playScene(0); }, 600);
     }
 
     function playScene(i) {
