@@ -1282,6 +1282,8 @@
                         setTimeout(function () { playScene(i + 1); }, 300);
                     });
                 }, totalPhotoTime);
+            } else {
+                playMusic();
             }
         });
     }
@@ -1301,6 +1303,23 @@
                 }, idx * interval);
             })(j);
         }
+    }
+
+    /* ---- music ---- */
+
+    var music = null;
+
+    function playMusic() {
+        music = new Audio('music/track.mp3');
+        music.loop = true;
+        music.volume = 0;
+        music.play().catch(function () {});
+        var vol = 0;
+        var fade = setInterval(function () {
+            vol += 0.01;
+            if (vol >= 0.15) { vol = 0.15; clearInterval(fade); }
+            music.volume = vol;
+        }, 80);
     }
 
     /* ---- word-by-word text ---- */
