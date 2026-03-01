@@ -245,6 +245,7 @@
             z-index: 200;
             background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
             animation: fragFall 1.6s cubic-bezier(0.22, 0, 0.7, 0.3) forwards;
+            will-change: transform, opacity;
         }
         @keyframes fragFall {
             0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
@@ -389,6 +390,46 @@
             100% { opacity: 0; transform: translateX(0); }
         }
 
+        /* ==================== LOADER ==================== */
+
+        #loader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
+            z-index: 999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        #loader.done {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader-text {
+            font-size: clamp(0.85rem, 2.2vw, 1rem);
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            color: rgba(240, 230, 211, 0.4);
+            margin-bottom: 1.8rem;
+        }
+        .loader-bar-wrap {
+            width: min(220px, 60vw);
+            height: 2px;
+            background: rgba(240, 230, 211, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background: rgba(240, 230, 211, 0.35);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
         /* ==================== MISC ==================== */
 
         ::selection { background: rgba(240,230,211,0.2); }
@@ -397,8 +438,14 @@
 </head>
 <body>
 
+<!-- ==================== LOADER ==================== -->
+<div id="loader">
+    <div class="loader-text">загрузка</div>
+    <div class="loader-bar-wrap"><div class="loader-bar" id="loader-bar"></div></div>
+</div>
+
 <!-- ==================== START ==================== -->
-<div id="start" class="screen">
+<div id="start" class="screen hidden">
     <div class="start-content">
         <div class="start-line">очень важный вопрос</div>
         <h1 class="start-title">Какой ты оладушек?</h1>
@@ -926,13 +973,15 @@
         }
     }
 
+    var isMobile = window.innerWidth < 600;
+
     function drawCrack(svg, pts, intensity) {
         var d = 'M ' + pts.map(function (p) { return p[0] + ' ' + p[1]; }).join(' L ');
         var path = document.createElementNS(SVG_NS, 'path');
         path.setAttribute('d', d);
-        path.setAttribute('stroke', 'rgba(240,230,211,0.3)');
-        path.setAttribute('stroke-width', '1');
-        path.setAttribute('filter', 'url(#crack-glow)');
+        path.setAttribute('stroke', 'rgba(240,230,211,0.35)');
+        path.setAttribute('stroke-width', isMobile ? '1.5' : '1');
+        if (!isMobile) path.setAttribute('filter', 'url(#crack-glow)');
         path.classList.add('crack-line');
 
         var total = 0;
@@ -1032,7 +1081,8 @@
 
         startCinema();
 
-        var cols = 14, rows = 20;
+        var cols = isMobile ? 8 : 14;
+        var rows = isMobile ? 12 : 20;
         var cellW = W / cols, cellH = H / rows;
         var grid = [];
 
@@ -1111,14 +1161,15 @@
             var dist = Math.sqrt(dirX * dirX + dirY * dirY);
             var del = (dist / maxDist) * 0.5 + Math.random() * 0.04;
 
-            var bright = 0.82 + Math.random() * 0.36;
-
             var f = document.createElement('div');
             f.className = 'fragment';
             f.style.clipPath = 'polygon(' + clip + ')';
             f.style.webkitClipPath = 'polygon(' + clip + ')';
             f.style.transformOrigin = mx + 'px ' + my + 'px';
-            f.style.filter = 'brightness(' + bright.toFixed(2) + ')';
+            if (!isMobile) {
+                var bright = 0.82 + Math.random() * 0.36;
+                f.style.filter = 'brightness(' + bright.toFixed(2) + ')';
+            }
             f.style.setProperty('--dx', dx + 'px');
             f.style.setProperty('--dy', dy + 'px');
             f.style.setProperty('--rot', rot + 'deg');
@@ -1137,7 +1188,7 @@
 
     function spawnParticles() {
         var box = document.getElementById('particles');
-        var n = window.innerWidth < 600 ? 22 : 42;
+        var n = isMobile ? 14 : 42;
         for (var i = 0; i < n; i++) {
             var p = document.createElement('div');
             p.className = 'particle';
@@ -1292,10 +1343,44 @@
     }
 
     /* ======================================================
+       PRELOADER
+       ====================================================== */
+
+    function preloadImages(cb) {
+        var urls = [];
+        scenes.forEach(function (s) {
+            s.files.forEach(function (f) { urls.push(s.folder + f); });
+        });
+
+        var total = urls.length;
+        var loaded = 0;
+        var bar = document.getElementById('loader-bar');
+
+        if (total === 0) { cb(); return; }
+
+        urls.forEach(function (url) {
+            var img = new Image();
+            img.onload = img.onerror = function () {
+                loaded++;
+                bar.style.width = (loaded / total * 100) + '%';
+                if (loaded >= total) {
+                    setTimeout(cb, 400);
+                }
+            };
+            img.src = url;
+        });
+    }
+
+    /* ======================================================
        INIT
        ====================================================== */
 
     initSelections();
+
+    preloadImages(function () {
+        document.getElementById('loader').classList.add('done');
+        document.getElementById('start').classList.remove('hidden');
+    });
 
     document.getElementById('btn-start').addEventListener('click', function () {
         show('quiz');
