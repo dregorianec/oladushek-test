@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Маленький тест</title>
+    <title>Какой ты оладушек?</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -244,11 +244,11 @@
             inset: 0;
             z-index: 200;
             background: radial-gradient(ellipse at 50% 40%, #2a1f3d 0%, #151020 60%, #0a0a0f 100%);
-            animation: fragFly 1.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            animation: fragFall 1.6s cubic-bezier(0.22, 0, 0.7, 0.3) forwards;
         }
-        @keyframes fragFly {
+        @keyframes fragFall {
             0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
-            70%  { opacity: 0.8; }
+            75%  { opacity: 1; }
             100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
         }
 
@@ -289,15 +289,18 @@
         .scene.on { opacity: 1; }
 
         .scene-text {
-            font-size: clamp(1.35rem, 5vw, 2.5rem);
+            font-size: clamp(1.6rem, 6.5vw, 3.2rem);
             font-weight: 300;
             font-style: italic;
             text-align: center;
             line-height: 1.55;
             padding: 0 2rem;
-            z-index: 2;
+            z-index: 10;
+            position: absolute;
+            left: 0; right: 0;
+            top: 5vh;
             letter-spacing: 0.04em;
-            text-shadow: 0 0 50px rgba(0,0,0,0.9);
+            text-shadow: 0 0 50px rgba(0,0,0,0.95), 0 0 25px rgba(0,0,0,0.8);
         }
 
         .word {
@@ -309,58 +312,36 @@
         .word.vis { opacity: 1; transform: translateY(0); }
 
         .scene-photo {
+            position: relative;
             margin-top: 1.5rem;
-            width: min(72vw, 340px);
-            height: min(72vw, 340px);
+            width: min(92vw, 500px);
+            height: min(92vw, 500px);
             border-radius: 6px;
             overflow: hidden;
             opacity: 0;
-            z-index: 1;
+            z-index: 5;
+            -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
         }
-
-        /* reveal styles */
-        .scene.photo-fade .scene-photo {
-            animation: photoFadeIn 1s ease forwards;
-        }
-        .scene.photo-fade .scene-photo img {
-            animation: kb 5s ease-out forwards;
-        }
-        @keyframes photoFadeIn {
-            from { opacity: 0; transform: scale(0.96); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-
-        .scene.photo-circle .scene-photo {
-            opacity: 1;
-            clip-path: circle(0% at 50% 50%);
-            animation: circleOpen 1.2s ease forwards;
-        }
-        .scene.photo-circle .scene-photo img {
-            animation: kb 5s ease-out forwards;
-        }
-        @keyframes circleOpen {
-            to { clip-path: circle(75% at 50% 50%); }
-        }
-
-        .scene.photo-slide .scene-photo {
-            animation: slideUp 0.9s ease forwards;
-        }
-        .scene.photo-slide .scene-photo img {
-            animation: kb 5s ease-out forwards;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes kb {
-            from { transform: scale(1.06); }
-            to   { transform: scale(1.16); }
-        }
+        .scene-photo.show { opacity: 1; transition: opacity 0.6s ease; }
 
         .scene-photo img {
+            position: absolute; inset: 0;
             width: 100%; height: 100%;
             object-fit: cover; display: block;
+            opacity: 0;
+            transition: opacity 0.45s ease;
+            animation: none;
+        }
+        .scene-photo img.vis {
+            opacity: 0.98;
+        }
+        .scene-photo img.kb {
+            animation: kb 4.5s ease-out forwards;
+        }
+        @keyframes kb {
+            from { transform: scale(1.01); }
+            to   { transform: scale(1.05); }
         }
         .photo-placeholder {
             width: 100%; height: 100%;
@@ -419,8 +400,8 @@
 <!-- ==================== START ==================== -->
 <div id="start" class="screen">
     <div class="start-content">
-        <div class="start-line">для одного особенного человека</div>
-        <h1 class="start-title">Маленький тест</h1>
+        <div class="start-line">очень важный вопрос</div>
+        <h1 class="start-title">Какой ты оладушек?</h1>
         <button class="btn" id="btn-start">начать</button>
     </div>
 </div>
@@ -471,54 +452,91 @@
         {
             title: 'Собери свой идеальный вечер',
             blocks: [
-                { label: 'за окном',  options: ['дождь', 'мягкий снег', 'тёплый ветер', 'густой туман'] },
-                { label: 'а ты',      options: ['с книгой и какао', 'на прогулке', 'смотришь фильм', 'в тишине и мыслях'] }
+                { label: 'за окном', options: ['дождь', 'мягкий снег', 'тёплый ветер', 'густой туман', 'гроза'] },
+                { label: 'ты', options: ['с книгой и какао', 'под пледом', 'смотришь фильм', 'готовишь что-то вкусное', 'в тишине и мыслях'] },
+                { label: 'рядом', options: ['кот', 'свечи', 'музыка', 'кто-то близкий', 'только тишина'] }
             ]
         },
         {
-            title: 'Утро, которое хочется запомнить',
+            title: 'Какое время тебе ближе?',
             blocks: [
-                { label: 'вокруг', options: ['море', 'горы', 'старый город', 'свой дом'] },
-                { label: 'свет',   options: ['золотой рассвет', 'мягкие облака', 'сквозь шторы'] }
+                { label: 'сезон', options: ['ранняя весна', 'жаркое лето', 'золотая осень', 'первый снег', 'белые ночи'] },
+                { label: 'почему', options: ['запахи', 'свет', 'настроение', 'воспоминания', 'свобода'] }
             ]
         },
         {
-            title: 'Музыка, которая сейчас в голове',
+            title: 'Незнакомый город. Что первое?',
             blocks: [
-                { label: 'звучит', options: ['тихо и нежно', 'ритмично и живо', 'глубоко и старо', 'тишина'] },
-                { label: 'о чём',  options: ['ностальгия', 'свобода', 'тепло', 'красивое одиночество'] }
+                { label: 'город', options: ['маленький европейский', 'азиатский мегаполис', 'приморский южный', 'северный с туманами', 'горный'] },
+                { label: 'первым делом', options: ['затеряться в улочках', 'найти кофейню', 'залезть повыше', 'сесть у воды', 'зайти на рынок'] },
+                { label: 'что заберёшь', options: ['фото', 'открытку', 'рецепт', 'историю', 'ничего — только ощущение'] }
             ]
         },
         {
-            title: 'Ты — кадр из фильма. Какой?',
+            title: 'Что сейчас звучит в голове?',
             blocks: [
-                { label: 'ты',   options: ['у окна поезда', 'танцуешь одна', 'пишешь письмо', 'идёшь под дождём'] },
-                { label: 'жанр', options: ['тихая драма', 'романтика', 'артхаус', 'фэнтези'] }
+                { label: 'звук', options: ['тихая мелодия', 'ритм', 'что-то старое и знакомое', 'шум дождя', 'тишина'] },
+                { label: 'настроение от этого', options: ['спокойствие', 'энергия', 'ностальгия', 'задумчивость', 'лёгкость'] },
+                { label: 'когда это приходит', options: ['в дороге', 'перед сном', 'когда грустно', 'когда хорошо', 'просто так'] }
             ]
         },
         {
-            title: 'Что важнее всего?',
+            title: 'Ты — кадр из фильма',
             blocks: [
-                { label: 'рядом',   options: ['понимание', 'чувства', 'тишина', 'интерес'] },
-                { label: 'и слова', options: ['я слышу тебя', 'я рядом', 'ты особенная', 'расскажи ещё'] }
+                { label: 'сцена', options: ['у окна поезда', 'танцуешь одна', 'идёшь под дождём', 'сидишь на крыше', 'бежишь по полю'] },
+                { label: 'жанр', options: ['тихая драма', 'романтика', 'артхаус', 'фэнтези', 'дорожное кино'] },
+                { label: 'палитра', options: ['тёплые тона', 'холодный синий', 'чёрно-белое', 'выгоревшие цвета', 'неон'] }
+            ]
+        },
+        {
+            title: 'Если бы можно было замедлить один момент',
+            blocks: [
+                { label: 'когда', options: ['утро выходного', 'поздний вечер в компании', 'перед поездкой', 'первые минуты в новом месте', 'когда все уже уснули'] },
+                { label: 'что в нём важно', options: ['свет', 'звуки', 'запахи', 'тепло', 'слова'] }
+            ]
+        },
+        {
+            title: 'Что тебя восстанавливает?',
+            blocks: [
+                { label: 'тело', options: ['горячая ванна', 'долгая прогулка', 'сон до полудня', 'вкусная еда', 'танцы'] },
+                { label: 'голова', options: ['разговор по душам', 'одиночество', 'что-то новое', 'знакомое и привычное', 'творчество'] },
+                { label: 'душа', options: ['природа', 'искусство', 'забота', 'смех', 'тишина'] }
+            ]
+        },
+        {
+            title: 'Что ты ценишь в людях?',
+            blocks: [
+                { label: 'сразу чувствуешь', options: ['честность', 'юмор', 'внимание к мелочам', 'спокойствие', 'странность'] },
+                { label: 'со временем', options: ['глубину', 'надёжность', 'нежность', 'ум', 'умение быть рядом молча'] }
             ]
         }
     ];
 
     var scenes = [
-        { text: 'она так редка',                                  photo: 'images/1.jpg' },
-        { text: 'и так неуловима',                                photo: 'images/2.jpg' },
-        { text: 'и я совсем без ума от неё',                      photo: 'images/3.jpg' },
-        { text: 'и как бы мне ни казалось,\nчто это иллюзия',     photo: 'images/4.jpg' },
-        { text: 'я хочу узнать её лучше',                         photo: 'images/5.jpg' },
-        { text: 'я хочу стать с ней ближе',                       photo: 'images/6.jpg' },
-        { text: 'ибо кроме неё\nмне ничего не интересно',         photo: 'images/7.jpg' }
+        { text: 'она так редка', folder: 'images/1/', files: [
+            'art.png','cosmos.png','gazette.png','geisha.png',
+            'paint sculp.png','picture.png','punk.png','sculp.png','ser.jpg','srednevecovie.png','orig.jpg'
+        ]},
+        { text: 'и так неуловима', folder: 'images/2/', files: [
+            'eva.png','bisnes.png','money.png','moto.png',
+            'panda.png','saloon.png','shield.png','utro.png','vict.png','min.png','orig.jpg'
+        ]},
+        { text: 'и я совсем без ума от неё', folder: 'images/3/', files: [
+            'bal.png','chaos.png','cyber.png','dark.png',
+            'drag.png','little.jpg','max.png','meh.png','orig.jpg'
+        ]},
+        { text: 'я хочу узнать её лучше', folder: 'images/4/', files: [
+            'bomb.png','coffee.png','hack.png','idol.png','lun.png',
+            'mad.png','mob.png','steam.png','zlo.png','orig.jpg'
+        ]},
+        { text: 'ибо кроме неё мне ничего не интересно', folder: 'images/5/', files: [
+            '1.png','2.png','3.png','4.png','5.png','6.png','7.png'
+        ]}
     ];
 
-    var photoStyles = ['photo-fade', 'photo-circle', 'photo-slide',
-                       'photo-fade', 'photo-circle', 'photo-slide', 'photo-fade'];
-    var kbOrigins   = ['center', 'top left', 'top right', 'bottom center',
-                       'center left', 'bottom right', 'center top'];
+    var PHOTO_TIME = 5000;
+    var kbOrigins = ['center', 'top left', 'top right', 'bottom left',
+                     'bottom right', 'center top'];
 
     /* ======================================================
        AUDIO ENGINE  (Web Audio API — no external files)
@@ -557,8 +575,8 @@
             var d = buf.getChannelData(ch);
             for (var i = 0; i < d.length; i++) {
                 var t = i / d.length;
-                d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 1.6) * 0.65;
-                if (Math.random() < 0.004) d[i] *= 4;
+                d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 1.6) * 0.18;
+                if (Math.random() < 0.004) d[i] *= 2;
             }
         }
         var src = c.createBufferSource(); src.buffer = buf;
@@ -705,6 +723,8 @@
        ====================================================== */
 
     var clicks = 0;
+    var crackStore = [];
+    var crackCenters = [];
 
     function fadeMsg(text, opac) {
         var m = document.getElementById('result-msg');
@@ -737,24 +757,26 @@
             return;
         }
 
-        if (clicks === 2) {
-            fadeMsg('ой, что-то сломалось... продолжай кликать');
-            fadeBtn('кликни');
-            playCrack(1);
-            addCracks(1);
-            shakeScreen(1);
+        if (clicks >= 2 && clicks <= 4) {
+            if (clicks === 2) {
+                fadeMsg('ой, что-то сломалось... продолжай кликать');
+                fadeBtn('кликни');
+            }
+            playCrack(clicks - 1);
+            spawnCrack(clicks - 2);
+            shakeScreen(clicks - 1);
+            if (clicks === 4) fadeMsg('ещё немного...');
             return;
         }
 
         if (clicks < 10) {
             var intensity = clicks - 1;
             playCrack(intensity);
-            addCracks(intensity);
+            growAllCracks(intensity);
             shakeScreen(intensity);
 
-            if (clicks === 5) fadeMsg('ещё немного...');
-            if (clicks === 7) fadeMsg('почти...');
-            if (clicks === 9) fadeMsg('...', 0.2);
+            if (clicks === 6) fadeMsg('почти...');
+            if (clicks === 8) fadeMsg('...', 0.2);
             return;
         }
 
@@ -769,41 +791,89 @@
 
     var SVG_NS = 'http://www.w3.org/2000/svg';
 
-    function addCracks(n) {
+    function spawnCrack(idx) {
         var svg = document.getElementById('crack-svg');
         var w = window.innerWidth, h = window.innerHeight;
-        var spread = 0.35 + n * 0.1;
-        var cx = w / 2 + (Math.random() - 0.5) * w * spread;
-        var cy = h / 2 + (Math.random() - 0.5) * h * spread;
-        var branches = 2 + Math.floor(n / 2);
 
-        for (var b = 0; b < branches; b++) {
-            var angle = Math.random() * Math.PI * 2;
-            var len = 80 + Math.random() * 160 + n * 40;
-            var pts = crackPath(cx, cy, angle, len);
-            drawCrack(svg, pts, n);
+        var zones = [
+            [0.25, 0.45, 0.2, 0.4],
+            [0.5, 0.72, 0.45, 0.65],
+            [0.2, 0.48, 0.55, 0.75]
+        ];
+        var z = zones[idx];
+        var cx = w * (z[0] + Math.random() * (z[1] - z[0]));
+        var cy = h * (z[2] + Math.random() * (z[3] - z[2]));
+        crackCenters.push([cx, cy]);
 
-            if (Math.random() < 0.65 + n * 0.04) {
-                var bi = Math.floor(pts.length * (0.2 + Math.random() * 0.5));
-                var ba = angle + (Math.random() - 0.5) * 1.8;
-                var bl = len * (0.3 + Math.random() * 0.3);
-                drawCrack(svg, crackPath(pts[bi][0], pts[bi][1], ba, bl), n);
+        var arms = 4 + Math.floor(Math.random() * 3);
+        var baseAngle = Math.random() * Math.PI * 2;
+
+        for (var a = 0; a < arms; a++) {
+            var angle = baseAngle + (a / arms) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+            var edge = rayEdge(cx, cy, angle, w, h);
+            var edgeDist = Math.sqrt((edge[0] - cx) * (edge[0] - cx) + (edge[1] - cy) * (edge[1] - cy));
+            var len = edgeDist * (0.85 + Math.random() * 0.35);
+
+            var pts = glassCrackPath(cx, cy, angle, len);
+            drawCrack(svg, pts, 2);
+            storeCrack(pts);
+
+            var bc = 1 + Math.floor(Math.random() * 3);
+            for (var b = 0; b < bc; b++) {
+                var t = 0.1 + Math.random() * 0.55;
+                var bi = Math.min(Math.floor(pts.length * t), pts.length - 1);
+                var side = Math.random() < 0.5 ? 1 : -1;
+                var ba = angle + side * (0.3 + Math.random() * 0.9);
+                var bl = len * (0.1 + Math.random() * 0.2) * (1 - t * 0.3);
+                var brPts = glassCrackPath(pts[bi][0], pts[bi][1], ba, bl);
+                drawCrack(svg, brPts, 2);
+                storeCrack(brPts);
+
+                if (Math.random() < 0.35) {
+                    var si = Math.min(Math.floor(brPts.length * (0.3 + Math.random() * 0.4)), brPts.length - 1);
+                    var sa = ba + (Math.random() - 0.5) * 1.4;
+                    var sl2 = bl * (0.25 + Math.random() * 0.3);
+                    var sPts = glassCrackPath(brPts[si][0], brPts[si][1], sa, sl2);
+                    drawCrack(svg, sPts, 2);
+                    storeCrack(sPts);
+                }
             }
-            if (n > 3 && Math.random() < 0.45) {
-                var bi2 = Math.floor(pts.length * (0.4 + Math.random() * 0.4));
-                var ba2 = angle + (Math.random() - 0.5) * 2.2;
-                var bl2 = len * (0.2 + Math.random() * 0.25);
-                drawCrack(svg, crackPath(pts[bi2][0], pts[bi2][1], ba2, bl2), n);
-            }
+        }
+
+        var mc = 3 + Math.floor(Math.random() * 4);
+        for (var m = 0; m < mc; m++) {
+            var ma = Math.random() * Math.PI * 2;
+            var mr = 3 + Math.random() * 14;
+            var mPts = glassCrackPath(
+                cx + Math.cos(ma) * mr,
+                cy + Math.sin(ma) * mr,
+                ma, 10 + Math.random() * 25
+            );
+            drawCrack(svg, mPts, 1);
         }
     }
 
-    function crackPath(x, y, angle, length) {
+    function glassCrackPath(x, y, angle, length) {
         var pts = [[x, y]];
-        var segs = 7 + Math.floor(Math.random() * 9);
-        var sl = length / segs;
-        for (var i = 0; i < segs; i++) {
-            angle += (Math.random() - 0.5) * 1.0;
+        var segs = 6 + Math.floor(Math.random() * 10);
+        var remaining = length;
+
+        for (var i = 0; i < segs && remaining > 2; i++) {
+            var ratio = 0.35 + Math.random() * 1.3;
+            var sl = Math.min((length / segs) * ratio, remaining);
+            remaining -= sl;
+
+            var r = Math.random();
+            var dev;
+            if (r < 0.1) {
+                dev = (Math.random() - 0.5) * 2.2;
+            } else if (r < 0.3) {
+                dev = (Math.random() - 0.5) * 1.0;
+            } else {
+                dev = (Math.random() - 0.5) * 0.35;
+            }
+            angle += dev;
+
             x += Math.cos(angle) * sl;
             y += Math.sin(angle) * sl;
             pts.push([x, y]);
@@ -811,12 +881,57 @@
         return pts;
     }
 
+    function storeCrack(pts) {
+        if (pts.length < 2) return;
+        var last = pts[pts.length - 1];
+        var prev = pts[pts.length - 2];
+        crackStore.push({
+            endX: last[0],
+            endY: last[1],
+            endAngle: Math.atan2(last[1] - prev[1], last[0] - prev[0])
+        });
+    }
+
+    function growAllCracks(intensity) {
+        var svg = document.getElementById('crack-svg');
+        var count = Math.min(crackStore.length, 4 + Math.floor(intensity * 1.2));
+        var indices = [];
+        for (var i = 0; i < crackStore.length; i++) indices.push(i);
+        indices.sort(function () { return Math.random() - 0.5; });
+        for (var g = 0; g < count; g++) {
+            growCrack(svg, crackStore[indices[g]], intensity);
+        }
+    }
+
+    function growCrack(svg, crack, intensity) {
+        var len = 30 + Math.random() * 60 + intensity * 22;
+        var angle = crack.endAngle + (Math.random() - 0.5) * 0.6;
+        var pts = glassCrackPath(crack.endX, crack.endY, angle, len);
+        drawCrack(svg, pts, 2);
+        var last = pts[pts.length - 1];
+        var prev = pts[pts.length - 2];
+        crack.endX = last[0];
+        crack.endY = last[1];
+        crack.endAngle = Math.atan2(last[1] - prev[1], last[0] - prev[0]);
+
+        var branchChance = 0.25 + intensity * 0.06;
+        var branches = Math.random() < branchChance ? (intensity > 5 ? 2 : 1) : 0;
+        for (var br = 0; br < branches; br++) {
+            var bi = Math.min(Math.floor(pts.length * (0.2 + Math.random() * 0.5)), pts.length - 1);
+            var ba = angle + (Math.random() < 0.5 ? 1 : -1) * (0.35 + Math.random() * 0.85);
+            var bl = len * (0.3 + Math.random() * 0.4);
+            var brPts = glassCrackPath(pts[bi][0], pts[bi][1], ba, bl);
+            drawCrack(svg, brPts, 2);
+            storeCrack(brPts);
+        }
+    }
+
     function drawCrack(svg, pts, intensity) {
         var d = 'M ' + pts.map(function (p) { return p[0] + ' ' + p[1]; }).join(' L ');
         var path = document.createElementNS(SVG_NS, 'path');
         path.setAttribute('d', d);
-        path.setAttribute('stroke', 'rgba(240,230,211,' + (0.25 + intensity * 0.06) + ')');
-        path.setAttribute('stroke-width', String(0.8 + intensity * 0.25));
+        path.setAttribute('stroke', 'rgba(240,230,211,0.3)');
+        path.setAttribute('stroke-width', '1');
         path.setAttribute('filter', 'url(#crack-glow)');
         path.classList.add('crack-line');
 
@@ -884,53 +999,126 @@
         }
     }
 
+    function nearestCrackDist(x, y) {
+        var min = 1e9;
+        for (var i = 0; i < crackCenters.length; i++) {
+            var dx = x - crackCenters[i][0], dy = y - crackCenters[i][1];
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d < min) min = d;
+        }
+        return min;
+    }
+
+    function jitterPt(x, y, jx, jy, W, H, edgeX, edgeY) {
+        if (!edgeX) x += (Math.random() - 0.5) * jx;
+        if (!edgeY) y += (Math.random() - 0.5) * jy;
+        return [Math.max(0, Math.min(W, x)), Math.max(0, Math.min(H, y))];
+    }
+
     function shatterPage() {
         var W = window.innerWidth, H = window.innerHeight;
-        var cx = W * 0.5 + (Math.random() - 0.5) * W * 0.06;
-        var cy = H * 0.5 + (Math.random() - 0.5) * H * 0.06;
+
+        var bx = W * (0.4 + Math.random() * 0.2);
+        var by = H * (0.3 + Math.random() * 0.3);
 
         document.getElementById('cinema').classList.remove('hidden');
         document.getElementById('cinema').style.opacity = '1';
-        document.getElementById('result-msg').style.visibility = 'hidden';
-        document.getElementById('btn-result').style.visibility = 'hidden';
+        document.getElementById('crack-svg').style.display = 'none';
+        var resultEl = document.getElementById('result');
+        resultEl.style.transition = 'none';
+        resultEl.style.opacity = '0';
+        resultEl.style.visibility = 'hidden';
+        resultEl.style.pointerEvents = 'none';
 
-        var n = 14;
-        var angles = [];
-        for (var i = 0; i < n; i++) {
-            angles.push((i / n) * Math.PI * 2 + (Math.random() - 0.5) * (Math.PI * 2 / n) * 0.55);
+        startCinema();
+
+        var cols = 14, rows = 20;
+        var cellW = W / cols, cellH = H / rows;
+        var grid = [];
+
+        for (var r = 0; r <= rows; r++) {
+            grid[r] = [];
+            for (var c = 0; c <= cols; c++) {
+                grid[r][c] = jitterPt(
+                    c * cellW, r * cellH,
+                    cellW * 0.72, cellH * 0.72,
+                    W, H,
+                    c === 0 || c === cols,
+                    r === 0 || r === rows
+                );
+            }
         }
-        angles.sort(function (a, b) { return a - b; });
 
-        var ePts = angles.map(function (a) { return rayEdge(cx, cy, a, W, H); });
-        var maxDist = Math.sqrt(cx * cx + cy * cy);
+        var maxDist = Math.sqrt(W * W + H * H) * 0.5;
+        var closeR = Math.min(W, H) * 0.2;
+        var midR = Math.min(W, H) * 0.4;
+        var pieces = [];
 
-        for (var i = 0; i < n; i++) {
-            var i2 = (i + 1) % n;
-            var p1 = ePts[i], p2 = ePts[i2];
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var tl = grid[r][c], tr = grid[r][c + 1];
+                var bl = grid[r + 1][c], br = grid[r + 1][c + 1];
+                var cmx = (tl[0] + tr[0] + br[0] + bl[0]) / 4;
+                var cmy = (tl[1] + tr[1] + br[1] + bl[1]) / 4;
+                var cd = nearestCrackDist(cmx, cmy);
 
-            var verts = [[cx, cy], p1];
-            insertCorners(verts, p1, p2, W, H);
-            verts.push(p2);
+                if (cd < closeR) {
+                    var cen = jitterPt(cmx, cmy, cellW * 0.2, cellH * 0.2, W, H, false, false);
+                    var mt = [(tl[0] + tr[0]) / 2 + (Math.random() - 0.5) * cellW * 0.15,
+                              (tl[1] + tr[1]) / 2 + (Math.random() - 0.5) * cellH * 0.15];
+                    var mr = [(tr[0] + br[0]) / 2 + (Math.random() - 0.5) * cellW * 0.15,
+                              (tr[1] + br[1]) / 2 + (Math.random() - 0.5) * cellH * 0.15];
+                    var mb = [(bl[0] + br[0]) / 2 + (Math.random() - 0.5) * cellW * 0.15,
+                              (bl[1] + br[1]) / 2 + (Math.random() - 0.5) * cellH * 0.15];
+                    var ml = [(tl[0] + bl[0]) / 2 + (Math.random() - 0.5) * cellW * 0.15,
+                              (tl[1] + bl[1]) / 2 + (Math.random() - 0.5) * cellH * 0.15];
+                    pieces.push([tl, mt, cen, ml]);
+                    pieces.push([mt, tr, mr, cen]);
+                    pieces.push([cen, mr, br, mb]);
+                    pieces.push([ml, cen, mb, bl]);
+                } else if (cd < midR) {
+                    if (Math.random() < 0.5) {
+                        pieces.push([tl, tr, br]);
+                        pieces.push([tl, br, bl]);
+                    } else {
+                        pieces.push([tl, tr, bl]);
+                        pieces.push([tr, br, bl]);
+                    }
+                } else {
+                    pieces.push([tl, tr, br, bl]);
+                }
+            }
+        }
+
+        for (var i = 0; i < pieces.length; i++) {
+            var verts = pieces[i];
 
             var clip = verts.map(function (v) {
                 return (v[0] / W * 100).toFixed(2) + '% ' + (v[1] / H * 100).toFixed(2) + '%';
             }).join(', ');
 
             var mx = 0, my = 0;
-            verts.forEach(function (v) { mx += v[0]; my += v[1]; });
+            for (var v = 0; v < verts.length; v++) {
+                mx += verts[v][0]; my += verts[v][1];
+            }
             mx /= verts.length; my /= verts.length;
 
-            var dx = (mx - cx) * 2.8 + (Math.random() - 0.5) * 90;
-            var dy = (my - cy) * 2.8 + (Math.random() - 0.5) * 90 + 50;
-            var rot = (Math.random() - 0.5) * 30;
-            var dist = Math.sqrt((mx - cx) * (mx - cx) + (my - cy) * (my - cy));
-            var del = (dist / maxDist) * 0.1;
+            var dirX = mx - bx, dirY = my - by;
+            var dx = dirX * 0.2 + (Math.random() - 0.5) * 22;
+            var dy = H * 0.6 + Math.random() * H * 0.6;
+            var rot = (Math.random() - 0.5) * 30 + (dirX > 0 ? 1 : -1) * 4;
+
+            var dist = Math.sqrt(dirX * dirX + dirY * dirY);
+            var del = (dist / maxDist) * 0.5 + Math.random() * 0.04;
+
+            var bright = 0.82 + Math.random() * 0.36;
 
             var f = document.createElement('div');
             f.className = 'fragment';
             f.style.clipPath = 'polygon(' + clip + ')';
             f.style.webkitClipPath = 'polygon(' + clip + ')';
             f.style.transformOrigin = mx + 'px ' + my + 'px';
+            f.style.filter = 'brightness(' + bright.toFixed(2) + ')';
             f.style.setProperty('--dx', dx + 'px');
             f.style.setProperty('--dy', dy + 'px');
             f.style.setProperty('--rot', rot + 'deg');
@@ -939,13 +1127,8 @@
         }
 
         setTimeout(function () {
-            document.getElementById('result').classList.add('hidden');
-            document.getElementById('crack-svg').style.display = 'none';
-            document.getElementById('result-msg').style.visibility = '';
-            document.getElementById('btn-result').style.visibility = '';
             document.querySelectorAll('.fragment').forEach(function (f) { f.remove(); });
-            startCinema();
-        }, 1700);
+        }, 2500);
     }
 
     /* ======================================================
@@ -984,17 +1167,23 @@
 
             var pw = document.createElement('div');
             pw.className = 'scene-photo';
-            var img = document.createElement('img');
-            img.src = s.photo;
-            img.alt = '';
-            img.style.transformOrigin = kbOrigins[i];
-            img.onerror = function () {
-                var ph = document.createElement('div');
-                ph.className = 'photo-placeholder';
-                ph.textContent = 'фото ' + (i + 1);
-                this.replaceWith(ph);
-            };
-            pw.appendChild(img);
+
+            for (var p = 0; p < s.files.length; p++) {
+                var img = document.createElement('img');
+                img.src = s.folder + s.files[p];
+                img.alt = '';
+                img.style.transformOrigin = kbOrigins[p % kbOrigins.length];
+                img.onerror = (function (idx) {
+                    return function () {
+                        var ph = document.createElement('div');
+                        ph.className = 'photo-placeholder';
+                        ph.textContent = 'фото ' + (idx + 1);
+                        ph.style.cssText = 'position:absolute;inset:0;';
+                        this.replaceWith(ph);
+                    };
+                })(p);
+                pw.appendChild(img);
+            }
 
             div.appendChild(txt);
             div.appendChild(pw);
@@ -1020,26 +1209,47 @@
 
         var el = document.getElementById('sc-' + i);
         var txt = el.querySelector('.scene-text');
+        var pw = el.querySelector('.scene-photo');
+        var imgs = pw.querySelectorAll('img');
         var isLast = i === scenes.length - 1;
+        var perPhoto = PHOTO_TIME / scenes[i].files.length;
 
         el.classList.add('on');
-        playReveal();
 
         showWords(txt, scenes[i].text, function () {
             setTimeout(function () {
-                el.classList.add(photoStyles[i]);
-            }, 400);
+                pw.classList.add('show');
+                runSlideshow(imgs, perPhoto);
+            }, 250);
+
+            var totalPhotoTime = PHOTO_TIME + 400;
 
             if (!isLast) {
                 setTimeout(function () {
                     glitch(function () {
-                        el.classList.remove('on', photoStyles[i]);
                         txt.innerHTML = '';
-                        setTimeout(function () { playScene(i + 1); }, 500);
+                        setTimeout(function () { playScene(i + 1); }, 300);
                     });
-                }, 3800);
+                }, totalPhotoTime);
             }
         });
+    }
+
+    var MAX_VISIBLE_PHOTOS = 2;
+
+    function runSlideshow(imgs, interval) {
+        for (var j = 0; j < imgs.length; j++) {
+            (function (idx) {
+                setTimeout(function () {
+                    imgs[idx].classList.add('vis', 'kb');
+                    var allVis = document.querySelectorAll('.scene-photo img.vis');
+                    while (allVis.length > MAX_VISIBLE_PHOTOS) {
+                        allVis[0].classList.remove('vis', 'kb');
+                        allVis = document.querySelectorAll('.scene-photo img.vis');
+                    }
+                }, idx * interval);
+            })(j);
+        }
     }
 
     /* ---- word-by-word text ---- */
@@ -1063,10 +1273,10 @@
         });
 
         allSpans.forEach(function (span, idx) {
-            setTimeout(function () { span.classList.add('vis'); }, idx * 190);
+            setTimeout(function () { span.classList.add('vis'); }, idx * 150);
         });
 
-        var total = allSpans.length * 190 + 500;
+        var total = allSpans.length * 150 + 300;
         if (done) setTimeout(done, total);
     }
 
@@ -1075,7 +1285,6 @@
     function glitch(cb) {
         var el = document.getElementById('glitch-overlay');
         el.classList.add('on');
-        playCrack(2);
         setTimeout(function () {
             el.classList.remove('on');
             if (cb) cb();
